@@ -1,6 +1,6 @@
 {
   "name": "vue-super-components",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A library to add inheritance mechanisms to Vue Components",
   "main": "dist/vue-super-components.min.js",
   "module": "dist/vue-super-components.esm.js",
@@ -30,7 +30,15 @@
     "type": "git",
     "url": "git+https://github.com/davolcu/vue-super-components.git"
   },
-  "keywords": [],
+  "keywords": [
+    "vue",
+    "javascript",
+    "sfc",
+    "inheritance",
+    "super",
+    "rollup",
+    "parent"
+  ],
   "author": "David Olmos",
   "license": "MIT",
   "bugs": {
