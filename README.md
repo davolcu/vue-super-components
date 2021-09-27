@@ -2,7 +2,7 @@
 
 [![version](https://img.shields.io/npm/v/vue-super-components.svg)](https://www.npmjs.com/package/vue-super-components)
 [![install-size](https://packagephobia.now.sh/badge?p=vue-super-components)](https://packagephobia.now.sh/result?p=vue-super-components)
-[![license](https://img.shields.io/npm/l/vue-super-components.svg)](https://github.com/bonavida/vue-super-components/blob/master/LICENSE)
+[![license](https://img.shields.io/npm/l/vue-super-components.svg)](https://github.com/davolcu/vue-super-components/blob/master/LICENSE)
 
 ## Overview
 
@@ -24,15 +24,15 @@ yarn add vue-super-components
 
 ### Initialization
 
-- Download the package: `npm install vue-super-components`
+-   Download the package: `npm install vue-super-components`
 
-- Import the library on your Vue components as follows:
+-   Import the library on your Vue components as follows:
 
 ```js
 import { SuperComponent } from 'vue-super-components';
 ```
 
-- From here, if you're using the SFC pattern, import the component which is supposed to be the parent component and instead of default exporting the Vue component as you would do, assign it to a constant, and default export as follows:
+-   From here, if you're using the SFC pattern, import the component which is supposed to be the parent component and instead of default exporting the Vue component as you would do, assign it to a constant, and default export as follows:
 
 ```js
 import ParentComponennt from 'path/to/ParentComponent.vue';
@@ -41,7 +41,7 @@ const ChildComponent = { name: 'ChildComponent' };
 export default SuperComponent(ChildComponent, ParentComponent);
 ```
 
-- Optionally you could also pass a configuration object for some extra settings, such as an extra array of attributes you want to ignore from the parent.
+-   Optionally you could also pass a configuration object for some extra settings, such as an extra array of attributes you want to ignore from the parent.
 
 ```js
 export default SuperComponent(ChildComponent, ParentComponent, { ignoredAttributes: ['name', 'props'] });
@@ -55,9 +55,9 @@ By default, all the Vue attributes which starts with the `_` character are ignor
 
 You may want to ignore some extra attributes during the inheritance process. Maybe for some cases, you want to ignore a certain attribute, for these scenarios you can add the `ignoredAttributes` property to the configuration file:
 
-| Property            | Description |
-| ------------------- | ----------- |
-| ignoredAttributes   | This property must be an array. It could include one or more Vue Attributes. For instance: `{ ignoredAttributes: ['name', 'props', 'data'] }` |
+| Property          | Description                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| ignoredAttributes | This property must be an array. It could include one or more Vue Attributes. For instance: `{ ignoredAttributes: ['name', 'props', 'data'] }` |
 
 ## Examples
 
@@ -89,7 +89,7 @@ export default {
 };
 ```
 
-This is a pretty straightforward component, which manages the `name`, `surname`. Now if you would like to extend this component, you probably would either move the code to a external object or to a mixin, which will do the trick, but is not real inheritance. 
+This is a pretty straightforward component, which manages the `name`, `surname`. Now if you would like to extend this component, you probably would either move the code to a external object or to a mixin, which will do the trick, but is not real inheritance.
 
 That's what SuperComponent does for you, automatically. You would write just a couple of extra lines as follows:
 
@@ -155,7 +155,7 @@ const ChildComponent = {
         getFormattedName() {
             return `${this.prefix} ${this.$parent.getFormattedName()}`;
         },
-    }
+    },
 };
 
 export default SuperComponent(ChildComponent, ParentComponent);
@@ -182,9 +182,9 @@ const ChildComponent = {
     methods: {
         // Gets the formatted name plus the prefix
         getFormattedName() {
-            return `${this.prefix} ${this.$parent.getFormattedName()}`
-        }
-    }
+            return `${this.prefix} ${this.$parent.getFormattedName()}`;
+        },
+    },
 };
 
 export default SuperComponent(ChildComponent, ParentComponent);
@@ -212,9 +212,9 @@ const ChildComponent = {
     methods: {
         // Gets the formatted name plus the prefix
         getFormattedName() {
-            return `${this.prefix} ${this.$parent.getFormattedName()}`
-        }
-    }
+            return `${this.prefix} ${this.$parent.getFormattedName()}`;
+        },
+    },
 };
 
 export default SuperComponent(ChildComponent, ParentComponent);
