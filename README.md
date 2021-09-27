@@ -6,7 +6,7 @@
 
 ## Overview
 
-`vue-super-components` Is a library to add inheritance mechanisms to Vue Components. The library will automatically add all the props, data, methods, etc. from the parent component which are not defined on the child component. The library will also add a `$parent` attribute to the child component where all the props, data, methods, etc. from the parent which are overwritten in the child, are placed
+`vue-super-components` Is a library to add inheritance mechanisms to Vue Components. The library will automatically add all the props, data, methods, etc. from the parent component which are not defined on the child component. The library will also add a `$parent` attribute to the child component where all the props, data, methods, etc. from the parent which are overwritten in the child, are placed.
 
 ## Instalation
 
@@ -41,7 +41,7 @@ const ChildComponent = { name: 'ChildComponent' };
 export default SuperComponent(ChildComponent, ParentComponent);
 ```
 
-- Optionally you could also pass a configuration object for some extra settings, such as an extra array of attributes you want to ignore from the parent
+- Optionally you could also pass a configuration object for some extra settings, such as an extra array of attributes you want to ignore from the parent.
 
 ```js
 export default SuperComponent(ChildComponent, ParentComponent, { ignoredAttributes: ['name', 'props'] });
@@ -49,7 +49,7 @@ export default SuperComponent(ChildComponent, ParentComponent, { ignoredAttribut
 
 ### Default ignored attributes
 
-By default, all the Vue attributes which starts with the `_` character are ignored, because they're suppossed to be private. Also the `render`, `staticRenderFns` attributes are ignored
+By default, all the Vue attributes which starts with the `_` character are ignored, because they're suppossed to be private. Also the `render`, `staticRenderFns` attributes are ignored by default.
 
 ### Configuration file
 
@@ -63,220 +63,201 @@ You may want to ignore some extra attributes during the inheritance process. May
 
 ### Example 1
 
-In this example I'll cover the setter and boolean getters.
-Let's say we have this component:
+In this example I'll cover a simple inheritance process.
+Let's say we have this component as ParentComponent:
 
 ```js
 export default {
-    name: 'BroComponent',
+    name: 'ParentComponent',
     data() {
         return {
             name: '',
             surname: '',
-            friends: [],
-        }
+        };
+    },
+    computed: {
+        // Get the name
+        parentName() {
+            return this.name;
+        },
+
+        // Get the surname
+        parentSurname() {
+            return this.surname;
+        },
     },
 };
 ```
 
-This is a pretty straightforward component, which manages the `name`, `surname` and the list of `friends` of a Bro. Now if you would like to use this component, you probably would like to set these data props, check if they have value different than an empty string, check if the array has any elements, etc. For all of these cases you would probably have to create methods such as `setName` or `hasFriends`, to handle events properly or render HTML or not.
+This is a pretty straightforward component, which manages the `name`, `surname`. Now if you would like to extend this component, you probably would either move the code to a external object or to a mixin, which will do the trick, but is not real inheritance. 
 
-That's what VuePopulator does for you, automatically. You would write just a couple of extra lines as follows:
+That's what SuperComponent does for you, automatically. You would write just a couple of extra lines as follows:
 
 ```js
-import { VuePopulator } from 'vue-template-populator';
+import { SuperComponent } from 'vue-super-components';
+import ParentComponent from 'path/to/ParentComponent.vue';
 
-export default {
-    name: 'BroComponent',
-    data() {
-        return {
-            name: '',
-            surname: '',
-            friends: [],
-        }
-    },
-    created() {
-        VuePopulator(this);
-    },
+const ChildComponent = {
+    name: 'ChildComponent',
 };
+
+export default SuperComponent(ChildComponent, ParentComponent);
 ```
 
-And the library will automatically create the following methods for you to use them:
-
-```js
-setName(name = '') {
-    this.name = name;
-},
-
-setSurname(surname = '') {
-    this.surname = surname;
-},
-
-setFriends(friends = []) {
-    this.friends = friends;
-},
-```
-
-It also will create the following computed for you:
-
-```js
-hasName() {
-    return !!this.name;
-},
-
-hasSurname() {
-    return !!this.surname;
-},
-
-hasFriends() {
-    return !!this.friends.length;
-},
-```
+And the library will automatically add the `data()` and the computeds defined in the parent, to the child. Also, as said, this process will create an attribute `$parent` on the ChildComponent, which will be an object containing the `name` attribute of its parent.
 
 Quite cool and easy to use huh!
 
-```js
-import { VuePopulator } from 'vue-template-populator';
-
-export default {
-    name: 'BroComponent',
-    data() {
-        return {
-            name: '',
-            surname: '',
-            friends: [],
-        }
-    },
-    created() {
-        VuePopulator(this);
-        
-        console.log(this.hasName);
-        // false
-        
-        this.setName('davolcu');
-        console.log(this.name, this.hasName);
-        // "davolcu", true
-    },
-};
-```
-
 ### Example 2
 
-In this second example, I'll show you the quick-access getter. 
+In this second example, I'll show you the overload feature. In other programming languages, which do have native inheritance, one of the most important features is the method overload. This means that you should be able to define a method in the child, which extends the functionality of the same method defined in the parent.
+
+`vue-super-components` runs at build time. This means that you can use the overloading (`$parent`) when coding the child component, even though the child component doesn't know yet that will be extended.
 
 #### Example 2.1
 
-To get a more realistic use-case, let's say we have a component which gets the data in an async way, from a `getData` method imported from a `services` layer file:
+To get a more realistic use-case, let's say we have a component which has a `name` and a `surname` as data props, and a method which returns the whole name as a formatted string:
 
 ```js
-import { getData } from 'services.js';
-
 export default {
-    name: 'BroComponent',
+    name: 'ParentComponent',
     data() {
         return {
-            bro: null,
-        }
+            name: 'Dav',
+            surname: 'Olcu',
+        };
     },
     methods: {
-        // Get the data for the component
-        fetchData() {
-            // Do async request
-            getData().then((response) => {
-                this.bro = { ...response.data }
-            });
-        }
-    },
-    created() {
-        this.fetchData();
+        // Gets the formatted name
+        getFormattedName() {
+            return `${this.name} ${this.surname}`;
+        },
     },
 };
 ```
 
-Again, this is an straightforward scenario, a component which gets the data from an API, so we don't know the structure `bro` will have. For instance, let's assume that `response.data` will have the following structure: `{ name: 'dav', surname: 'olcu', friends: [] }`. As I've mentioned before, you can call the populator in any moment, so let's call it right after the response assignation:
+Now let's say we have another component, which will do exactly the same, but will also receive a prefix as a prop. As said, we could make this second component to extend from the previous one, and overload the `getFormattedName` as follows:
 
 ```js
-import { VuePopulator } from 'vue-template-populator';
-import { getData } from 'services.js';
+import { SuperComponent } from 'vue-super-components';
+import ParentComponent from 'path/to/ParentComponent.vue';
 
-export default {
-    name: 'BroComponent',
-    data() {
-        return {
-            bro: null,
-        }
+const ChildComponent = {
+    name: 'ChildComponent',
+    props: {
+        prefix: {
+            type: String,
+            default: 'Sir',
+        },
     },
     methods: {
-        // Get the data for the component
-        fetchData() {
-            // Do async request
-            getData().then((response) => {
-                this.bro = { ...response.data }
-                VuePopulator(this);
-            });
-        }
-    },
-    created() {
-        this.fetchData();
-    },
-};
-```
-
-As I've already explained, the `setBro` method, and the `hasBro` computed will be created. But as `bro` is an object, some quick-access computed getters will be created too, actually there'll be one for each property of the object. So in this case the following computed getters will be created:
-
-- `broName`: Quick-access to `bro.name`.
-- `broSurname`: Quick-access to `bro.surname`.
-- `broFriends`: Quick-access to `bro.friends`.
-
-```js
-.
-.
-.
-methods: {
-    // Get the data for the component
-    fetchData() {
-        // Do async request
-        getData().then((response) => {
-            this.bro = { ...response.data }
-            VuePopulator(this);
-            
-            console.log(this.broName, this.broSurname)
-            // "dav", "olcu"
-        });
+        // Gets the formatted name plus the prefix
+        getFormattedName() {
+            return `${this.prefix} ${this.$parent.getFormattedName()}`;
+        },
     }
-},
-.
-.
-.
+};
+
+export default SuperComponent(ChildComponent, ParentComponent);
 ```
+
+Since we're defining the exact same method on this ChildComponent, the `$parent` attribute will be created, containing the originial method from the parent.
 
 #### Example 2.2
 
-Not only that, if any of the properties of any object is actually another object, the same process will be applied, resulting on an infinite nesting quick-access system. So, given the same scenario, let's assume `response.data` this time is `{ metadata: { name: 'dav', surname: { first: 'ol', last: 'cu' }}, friends: [] }`. Then, the following will be created:
-
-- `broMetadataName`: Quick-access to `bro.metadata.name`.
-- `broMetadataSurnameFirst`: Quick-access to `bro.metadata.surname.first`.
-- `broMetadataSurnameLast`: Quick-access to `bro.metadata.surname.last`.
-- `broFriends`: Quick-access to `bro.friends`.
+Not only that, all the attributes can be extended. So, for instance, if instead of having a prop for the prefix we would like to have it as a data prop, we could extend the `data()` function from the parent, as it just returns an object. As follows:
 
 ```js
-.
-.
-.
-methods: {
-    // Get the data for the component
-    fetchData() {
-        // Do async request
-        getData().then((response) => {
-            this.bro = { ...response.data }
-            VuePopulator(this);
-            
-            console.log(this.broMetadataName, this.broMetadataSurnameLast)
-            // "dav", "cu"
-        });
+import { SuperComponent } from 'vue-super-components';
+import ParentComponent from 'path/to/ParentComponent.vue';
+
+const ChildComponent = {
+    name: 'ChildComponent',
+    data() {
+        return {
+            ...this.$parent.data(),
+            prefix: 'Sir',
+        };
+    },
+    methods: {
+        // Gets the formatted name plus the prefix
+        getFormattedName() {
+            return `${this.prefix} ${this.$parent.getFormattedName()}`
+        }
     }
-},
-.
-.
-.
+};
+
+export default SuperComponent(ChildComponent, ParentComponent);
 ```
+
+Again, since we're defining the `data()` on the child component, the original data function from the parent will be included in the `$parent` attribute.
+
+### Example 2.3
+
+The same way, we could overwrite any prop or data prop on the child by simply extending the original attribute. So, for instance, if we want the ChildComponent to have a different `name` we could just overload the parent's data function. As follows:
+
+```js
+import { SuperComponent } from 'vue-super-components';
+import ParentComponent from 'path/to/ParentComponent.vue';
+
+const ChildComponent = {
+    name: 'ChildComponent',
+    data() {
+        return {
+            ...this.$parent.data(),
+            prefix: 'Sir',
+            name: 'NotDav',
+        };
+    },
+    methods: {
+        // Gets the formatted name plus the prefix
+        getFormattedName() {
+            return `${this.prefix} ${this.$parent.getFormattedName()}`
+        }
+    }
+};
+
+export default SuperComponent(ChildComponent, ParentComponent);
+```
+
+### Example 3
+
+Last but not least, as explained on the `Configuration` section, by adding the `ignoredAttributes`, we could define a list of attributes we don't want to extend.
+
+Say we have the same parent component, but now it also includes a `mounted` function which triggers on every mount LCH:
+
+```js
+export default {
+    name: 'ParentComponent',
+    data() {
+        return {
+            name: 'Dav',
+            surname: 'Olcu',
+        };
+    },
+    methods: {
+        // Gets the formatted name
+        getFormattedName() {
+            return `${this.name} ${this.surname}`;
+        },
+    },
+    mounted() {
+        // Do something
+    },
+};
+```
+
+And let's say we want the child to be stateless, so we don't want to execute that `mounted` at all. Then we could exclude it through the `ignoredAttributes`:
+
+```js
+import { SuperComponent } from 'vue-super-components';
+import ParentComponent from 'path/to/ParentComponent.vue';
+
+const ChildComponent = {
+    name: 'ChildComponent',
+};
+
+export default SuperComponent(ChildComponent, ParentComponent, { ignoredAttributes: ['mounted'] });
+```
+
+Obviously, this is not a common scenario, but it could be used to exclude mixins, props or any other attribute on more specific scenarios.
