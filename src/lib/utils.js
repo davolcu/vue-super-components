@@ -50,22 +50,22 @@ export const populateAttribute = (component, value, attribute) => {
     const type = typeof value;
 
     // If the parent object in the child component doesn't exist then create it
-    if (!component.$parent) {
-        component.$parent = {};
+    if (!component.$super) {
+        component.$super = {};
     }
 
     // Check the object fields to run a deep copy process
     if (isObject(type)) {
         if (!isObject(childType)) {
             Object.entries(value).forEach(([key, entryValue]) => {
-                component.$parent[key] = entryValue;
+                component.$super[key] = entryValue;
             });
             return;
         }
 
         Object.entries(value).forEach(([key, entryValue]) => {
             if (childValue[key]) {
-                component.$parent[key] = entryValue;
+                component.$super[key] = entryValue;
                 return;
             }
 
@@ -76,7 +76,7 @@ export const populateAttribute = (component, value, attribute) => {
 
     // Check the arrays to run an array merge if both fields are arrays
     if (isArray(type)) {
-        component.$parent[attribute] = [...value];
+        component.$super[attribute] = [...value];
 
         if (isArray(childType)) {
             component[attribute] = [...value, ...childValue];
@@ -86,5 +86,5 @@ export const populateAttribute = (component, value, attribute) => {
     }
 
     // On the rest of the cases simply save the value onto the parent object
-    component.$parent[attribute] = value;
+    component.$super[attribute] = value;
 };
