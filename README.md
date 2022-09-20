@@ -6,7 +6,7 @@
 
 ## Overview
 
-`vue-super-components` Is a library to add inheritance mechanisms to Vue Components. The library will automatically add all the props, data, methods, etc. from the parent component which are not defined on the child component. The library will also add a `$parent` attribute to the child component where all the props, data, methods, etc. from the parent which are overwritten in the child, are placed.
+`vue-super-components` Is a library to add inheritance mechanisms to Vue Components. The library will automatically add all the props, data, methods, etc. from the parent component which are not defined on the child component. The library will also add a `$super` attribute to the child component where all the props, data, methods, etc. from the parent which are overwritten in the child, are placed.
 
 ## Instalation
 
@@ -104,7 +104,7 @@ const ChildComponent = {
 export default SuperComponent(ChildComponent, ParentComponent);
 ```
 
-And the library will automatically add the `data()` and the computeds defined in the parent, to the child. Also, as said, this process will create an attribute `$parent` on the ChildComponent, which will be an object containing the `name` attribute of its parent.
+And the library will automatically add the `data()` and the computeds defined in the parent, to the child. Also, as said, this process will create an attribute `$super` on the ChildComponent, which will be an object containing the `name` attribute of its parent.
 
 Quite cool and easy to use huh!
 
@@ -112,7 +112,7 @@ Quite cool and easy to use huh!
 
 In this second example, I'll show you the overload feature. In other programming languages, which do have native inheritance, one of the most important features is the method overload. This means that you should be able to define a method in the child, which extends the functionality of the same method defined in the parent.
 
-`vue-super-components` runs at build time. This means that you can use the overloading (`$parent`) when coding the child component, even though the child component doesn't know yet that will be extended.
+`vue-super-components` runs at build time. This means that you can use the overloading (`$super`) when coding the child component, even though the child component doesn't know yet that will be extended.
 
 #### Example 2.1
 
@@ -153,7 +153,7 @@ const ChildComponent = {
     methods: {
         // Gets the formatted name plus the prefix
         getFormattedName() {
-            return `${this.prefix} ${this.$parent.getFormattedName()}`;
+            return `${this.prefix} ${this.$super.getFormattedName()}`;
         },
     },
 };
@@ -161,7 +161,7 @@ const ChildComponent = {
 export default SuperComponent(ChildComponent, ParentComponent);
 ```
 
-Since we're defining the exact same method on this ChildComponent, the `$parent` attribute will be created, containing the originial method from the parent.
+Since we're defining the exact same method on this ChildComponent, the `$super` attribute will be created, containing the originial method from the parent.
 
 #### Example 2.2
 
@@ -175,14 +175,14 @@ const ChildComponent = {
     name: 'ChildComponent',
     data() {
         return {
-            ...this.$parent.data(),
+            ...this.$super.data(),
             prefix: 'Sir',
         };
     },
     methods: {
         // Gets the formatted name plus the prefix
         getFormattedName() {
-            return `${this.prefix} ${this.$parent.getFormattedName()}`;
+            return `${this.prefix} ${this.$super.getFormattedName()}`;
         },
     },
 };
@@ -190,7 +190,7 @@ const ChildComponent = {
 export default SuperComponent(ChildComponent, ParentComponent);
 ```
 
-Again, since we're defining the `data()` on the child component, the original data function from the parent will be included in the `$parent` attribute.
+Again, since we're defining the `data()` on the child component, the original data function from the parent will be included in the `$super` attribute.
 
 ### Example 2.3
 
@@ -204,7 +204,7 @@ const ChildComponent = {
     name: 'ChildComponent',
     data() {
         return {
-            ...this.$parent.data(),
+            ...this.$super.data(),
             prefix: 'Sir',
             name: 'NotDav',
         };
@@ -212,7 +212,7 @@ const ChildComponent = {
     methods: {
         // Gets the formatted name plus the prefix
         getFormattedName() {
-            return `${this.prefix} ${this.$parent.getFormattedName()}`;
+            return `${this.prefix} ${this.$super.getFormattedName()}`;
         },
     },
 };
