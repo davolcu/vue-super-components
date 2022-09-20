@@ -2,6 +2,14 @@
 import { constants } from './constants.js';
 
 /**
+ * Checks if the current attribute should be treated in a different way when populating the super instance
+ * @param {String} attribute
+ */
+const isSpecialAttribute = (attribute) => {
+    return constants.SPECIAL_OBJECT_ATTRIBUTES.includes(attribute);
+};
+
+/**
  * Checks if the type of the attribute is an Object
  * @param {String} type
  */
@@ -58,6 +66,15 @@ export const populateAttribute = (component, value, attribute) => {
     if (isObject(type)) {
         if (!isObject(childType)) {
             Object.entries(value).forEach(([key, entryValue]) => {
+                if (isSpecialAttribute(attribute)) {
+                    if (!component.$super[attribute]) {
+                        component.$super[attribute] = {};
+                    }
+
+                    component.$super[attribute][key] = entryValue;
+                    return;
+                }
+
                 component.$super[key] = entryValue;
             });
             return;
@@ -65,6 +82,15 @@ export const populateAttribute = (component, value, attribute) => {
 
         Object.entries(value).forEach(([key, entryValue]) => {
             if (childValue[key]) {
+                if (isSpecialAttribute(attribute)) {
+                    if (!component.$super[attribute]) {
+                        component.$super[attribute] = {};
+                    }
+
+                    component.$super[attribute][key] = entryValue;
+                    return;
+                }
+
                 component.$super[key] = entryValue;
                 return;
             }
@@ -87,4 +113,17 @@ export const populateAttribute = (component, value, attribute) => {
 
     // On the rest of the cases simply save the value onto the parent object
     component.$super[attribute] = value;
+};
+
+/**
+ * Sets the $super attribute as a computed property for the resulting Vue component
+ * @param {Object} component
+ */
+export const setSuperComputed = ({ $super = {}, ...component }) => {
+    if (!component.computed) {
+        component.computed = {};
+    }
+
+    component.computed.$super = () => $super;
+    return component;
 };

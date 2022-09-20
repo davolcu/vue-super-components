@@ -1,5 +1,5 @@
 // Custom imports
-import { getFilteredAttributes, populateAttribute } from './utils.js';
+import { getFilteredAttributes, populateAttribute, setSuperComputed } from './utils.js';
 
 const superComponent = (child, parent, config) => {
     const component = { ...child };
@@ -16,6 +16,7 @@ const superComponent = (child, parent, config) => {
         populateAttribute(component, value, attribute);
     });
 
+    setSuperComputed(component);
     return component;
 };
 
