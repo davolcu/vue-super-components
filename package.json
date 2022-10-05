@@ -1,6 +1,6 @@
 {
   "name": "vue-super-components",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A library to add inheritance mechanisms to Vue Components",
   "main": "dist/vue-super-components.min.js",
   "module": "dist/vue-super-components.esm.js",

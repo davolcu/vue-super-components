@@ -16,8 +16,7 @@ const superComponent = (child, parent, config) => {
         populateAttribute(component, value, attribute);
     });
 
-    setSuperComputed(component);
-    return component;
+    return setSuperComputed(component);
 };
 
 export default superComponent;
