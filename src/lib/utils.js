@@ -124,6 +124,11 @@ export const setSuperComputed = ({ $super = {}, ...component }) => {
         component.computed = {};
     }
 
-    component.computed.$super = () => $super;
+    component.computed = {
+        ...component.computed,
+        $super() {
+            return $super;
+        },
+    };
     return component;
 };
